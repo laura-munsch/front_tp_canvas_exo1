@@ -5,8 +5,34 @@ const ctx = canvas.getContext('2d');
 // on assigne le storage du navigateur à une constante
 const ls = window.localStorage;
 
+// bouton pour la réinitialisation :
+const resetBtn = document.getElementById('reset');
+
 // création du tableau contenant les paramètres des futurs cercles
 let cercles = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+    // au chargement, on récupère les cercles stockés dans le storage
+    cercles = getCercles();
+
+    // on trace tous les anciens cercles
+    tracerAllCercles();
+
+    canvas.addEventListener('click', (e) => {
+        // on récupère les coordonnées de la souris
+        let mouseX = e.clientX;
+        let mouseY = e.clientY;
+    
+        // on crée un cercle à cet endroit
+        creerCercle(mouseX, mouseY);
+    
+        // on enregistre les cercles dans le storage du navigateur
+        saveCercles();
+    });
+
+    // réinitialisation du canvas au clic sur le bouton
+    resetBtn.addEventListener('click', reset);
+});
 
 function tracerCercle(x, y, rayon, couleur) {
     ctx.fillStyle = couleur;
@@ -51,20 +77,14 @@ function getCercles() {
     return cerclesToReturn;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    cercles = getCercles();
-    tracerAllCercles();
+function reset() {
+    // on nettoie le canvas
+    ctx.clearRect(0, 0, 600, 600);
 
-    canvas.addEventListener('click', (e) => {
-        // on récupère les coordonnées de la souris
-        let mouseX = e.clientX;
-        let mouseY = e.clientY;
-    
-        // on crée un cercle à cet endroit
-        creerCercle(mouseX, mouseY);
-    
-        // on enregistre les cercles dans le storage du navigateur
-        saveCercles();
-    });
-});
+    // on réinitialise la valeur du tableau de cercles en local
+    cercles = [];
+
+    // et dans le storage
+    saveCercles();
+}
 
